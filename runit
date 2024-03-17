@@ -1,0 +1,2 @@
+cd /home/dwade/esp-dev/e-paper/mfg-test/RaspberryPi_JetsonNano/c
+sudo ./epd 
