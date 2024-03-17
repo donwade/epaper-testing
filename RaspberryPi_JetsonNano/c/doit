@@ -1,5 +1,5 @@
 cat list.txt
 sleep 3
 rm -f *.i *.s epd
-sudo make clean
-sudo --preserve-env=CFLAGS,CXXFLAGS make -j4 EPD=epd7in5bV2
+make clean
+make -j4 EPD=epd7in5bV2
