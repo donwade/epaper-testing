@@ -30,5 +30,5 @@ fi
 if [ "$UNAME" == "dwade-15R" ]; then
     xcp-whitebox /home/dwade/esp32-dev/e-paper/mfg-test.II/RaspberryPi_JetsonNano/c
     xcmd-whitebox  "set -x && cd $PWD && ./doit && file epd"
-    xcmd-whitebox  "./runit $PISSWORD"
+    #xcmd-whitebox  "./runit $PISSWORD"
 fi
