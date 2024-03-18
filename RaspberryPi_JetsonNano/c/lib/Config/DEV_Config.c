@@ -6,7 +6,7 @@
 *----------------
 * |	This version:   V3.0
 * | Date        :   2019-07-31
-* | Info        :   
+* | Info        :
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
@@ -54,7 +54,7 @@ void DEV_Digital_Write(UWORD Pin, UBYTE Value)
 	bcm2835_gpio_write(Pin, Value);
 #elif USE_WIRINGPI_LIB
 	digitalWrite(Pin, Value);
-#elif  USE_LGPIO_LIB  
+#elif  USE_LGPIO_LIB
     lgGpioWrite(GPIO_Handle, Pin, Value);
 #elif USE_DEV_LIB
 	GPIOD_Write(Pin, Value);
@@ -78,7 +78,7 @@ UBYTE DEV_Digital_Read(UWORD Pin)
 	Read_value = bcm2835_gpio_lev(Pin);
 #elif USE_WIRINGPI_LIB
 	Read_value = digitalRead(Pin);
-#elif  USE_LGPIO_LIB  
+#elif  USE_LGPIO_LIB
     Read_value = lgGpioRead(GPIO_Handle,Pin);
 #elif USE_DEV_LIB
 	Read_value = GPIOD_Read(Pin);
@@ -105,7 +105,7 @@ void DEV_SPI_WriteByte(uint8_t Value)
 	bcm2835_spi_transfer(Value);
 #elif USE_WIRINGPI_LIB
 	wiringPiSPIDataRW(0,&Value,1);
-#elif  USE_LGPIO_LIB 
+#elif  USE_LGPIO_LIB
     lgSpiWrite(SPI_Handle,(char*)&Value, 1);
 #elif USE_DEV_LIB
 	DEV_HARDWARE_SPI_TransferByte(Value);
@@ -129,7 +129,7 @@ void DEV_SPI_Write_nByte(uint8_t *pData, uint32_t Len)
 	bcm2835_spi_transfernb((char *)pData,rData,Len);
 #elif USE_WIRINGPI_LIB
 	wiringPiSPIDataRW(0, pData, Len);
-#elif  USE_LGPIO_LIB 
+#elif  USE_LGPIO_LIB
     lgSpiWrite(SPI_Handle,(char*)pData, Len);
 #elif USE_DEV_LIB
 	DEV_HARDWARE_SPI_Transfer(pData, Len);
@@ -169,7 +169,7 @@ void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
 		pinMode(Pin, OUTPUT);
 		// Debug (" %d OUT \r\n",Pin);
 	}
-#elif  USE_LGPIO_LIB  
+#elif  USE_LGPIO_LIB
     if(Mode == 0 || Mode == LG_SET_INPUT){
         lgGpioClaimInput(GPIO_Handle,LFLAGS,Pin);
         // printf("IN Pin = %d\r\n",Pin);
@@ -208,7 +208,7 @@ void DEV_Delay_ms(UDOUBLE xms)
 	bcm2835_delay(xms);
 #elif USE_WIRINGPI_LIB
 	delay(xms);
-#elif  USE_LGPIO_LIB  
+#elif  USE_LGPIO_LIB
     lguSleep(xms/1000.0);
 #elif USE_DEV_LIB
 	UDOUBLE i;
@@ -300,7 +300,7 @@ void DEV_GPIO_Init(void)
 
 	DEV_Digital_Write(EPD_CS_PIN, 1);
     DEV_Digital_Write(EPD_PWR_PIN, 1);
-    
+
 }
 /******************************************************************************
 function:	Module Initialize, the library and initialize the pins, SPI protocol
@@ -314,7 +314,9 @@ UBYTE DEV_Module_Init(void)
 		return 1;
 	}
 #ifdef RPI
+    #pragma message("using RPI")
 #ifdef USE_BCM2835_LIB
+    #pragma message("using USE_BCM2835_LIB")
 	if(!bcm2835_init()) {
 		printf("bcm2835 init failed  !!! \r\n");
 		return 1;
@@ -333,6 +335,7 @@ UBYTE DEV_Module_Init(void)
 	bcm2835_spi_setChipSelectPolarity(BCM2835_SPI_CS0, LOW);     //enable cs0
 
 #elif USE_WIRINGPI_LIB
+    #pragma message("using USE_WIRINGPI_LIB")
 	//if(wiringPiSetup() < 0)//use wiringpi Pin number table
 	if(wiringPiSetupGpio() < 0) { //use BCM2835 Pin number table
 		printf("set wiringPi lib failed	!!! \r\n");
@@ -346,6 +349,7 @@ UBYTE DEV_Module_Init(void)
 	wiringPiSPISetup(0,10000000);
 	// wiringPiSPISetupMode(0, 32000000, 0);
 #elif  USE_LGPIO_LIB
+    #pragma message("using USE_LGPIO_LIB")
     char buffer[NUM_MAXBUF];
     FILE *fp;
 
@@ -376,6 +380,7 @@ UBYTE DEV_Module_Init(void)
     SPI_Handle = lgSpiOpen(0, 0, 10000000, 0);
     DEV_GPIO_Init();
 #elif USE_DEV_LIB
+    #pragma message("using USE_DEV_LIB")
 	printf("Write and read /dev/spidev0.0 \r\n");
     GPIOD_Export();
 	DEV_GPIO_Init();
@@ -385,6 +390,7 @@ UBYTE DEV_Module_Init(void)
 
 #elif JETSON
 #ifdef USE_DEV_LIB
+    #pragma message("using JETSON")
 	DEV_GPIO_Init();
 	printf("Software spi\r\n");
 	SYSFS_software_spi_begin();
@@ -392,6 +398,7 @@ UBYTE DEV_Module_Init(void)
 	SYSFS_software_spi_setDataMode(SOFTWARE_SPI_Mode0);
 	SYSFS_software_spi_setClockDivider(SOFTWARE_SPI_CLOCK_DIV4);
 #elif USE_HARDWARE_LIB
+    #pragma message("using USE_HARDWARE_LIB")
 	printf("Write and read /dev/spidev0.0 \r\n");
 	DEV_GPIO_Init();
 	DEV_HARDWARE_SPI_begin("/dev/spidev0.0");
@@ -423,7 +430,7 @@ void DEV_Module_Exit(void)
     DEV_Digital_Write(EPD_PWR_PIN, 0);
 	DEV_Digital_Write(EPD_DC_PIN, 0);
 	DEV_Digital_Write(EPD_RST_PIN, 0);
-#elif USE_DEV_LIB 
+#elif USE_DEV_LIB
     DEV_Digital_Write(EPD_CS_PIN, 0);
     DEV_Digital_Write(EPD_PWR_PIN, 0);
 	DEV_Digital_Write(EPD_DC_PIN, 0);
