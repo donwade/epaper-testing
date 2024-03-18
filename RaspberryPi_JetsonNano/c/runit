@@ -1,2 +1,17 @@
-cd /home/dwade/tools-dev/e-paper/mfg-test/RaspberryPi_JetsonNano/c
-sudo ./epd 
+#!/bin/bash
+
+if [ "$PISSWORD" == "" ]; then
+    PISSWORD="$1"
+    if [ "$PISSWORD" == "" ]; then
+        echo "can't find password"
+        exit
+    else
+        echo "using password supplied from \$1"
+    fi
+else
+    echo "using password from environment"
+fi
+        
+cd /home/dwade/esp32-dev/e-paper/mfg-test.II/RaspberryPi_JetsonNano/c
+[ "`pidof epd`" != "" ] &&  echo $PISSWORD | sudo -S kill -s 9 `pidof epd`
+echo $PISSWORD | sudo -S ./epd 

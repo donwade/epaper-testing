@@ -1,5 +1,34 @@
+#!/bin/bash
+reset
+UNAME=`uname -n`
+
 cat list.txt
 sleep 3
 rm -f *.i *.s epd
+
 make clean
 make -j4 EPD=epd7in5bV2
+if [ $? != 0 ]; then
+    echo "make failed"
+fi
+set -x
+if [ "$UNAME" != "whitebox" ]; then
+
+    echo
+    ask "gen SI file" 5
+    ret=$?
+    echo
+
+    if [ $ret != 0 ]; then
+        make clean
+        genSI-fromMakefile EPD=epd7in5bV2
+    fi
+fi
+
+# quickly copy to whitebox and compile and run
+
+if [ "$UNAME" == "dwade-15R" ]; then
+    xcp-whitebox /home/dwade/esp32-dev/e-paper/mfg-test.II/RaspberryPi_JetsonNano/c
+    xcmd-whitebox  "set -x && cd $PWD && ./doit && file epd"
+    xcmd-whitebox  "./runit $PISSWORD"
+fi
