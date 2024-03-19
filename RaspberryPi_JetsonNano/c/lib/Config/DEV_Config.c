@@ -51,7 +51,12 @@ int EPD_PWR_PIN;
 void xDEV_Digital_Write(char *x, UWORD Pin, UBYTE Value)
 {
 #ifdef RPI
-    printf("%s : %s (%02d)=%d\n", __FUNCTION__, x, Pin, Value);
+    if (Pin == 25)
+        printf("%s : %s (%02d)=%2d \t%s\n", __FUNCTION__, x, Pin, Value, Value == 0 ? "COMMAND" :
+        "DATA");
+    else
+        printf("%s : %s (%02d)=%2d\n", __FUNCTION__, x, Pin, Value);
+
     if (Pin == 8 && Value == 1) printf("\n");   //transaction done
 #ifdef USE_BCM2835_LIB
 	bcm2835_gpio_write(Pin, Value);
@@ -116,7 +121,7 @@ UBYTE DEV_Digital_Read(UWORD Pin)
 
 void DEV_SPI_WriteByte(uint8_t Value)
 {
-    printf("%s > %02d [0x%02X]\n", __FUNCTION__, Value, Value);
+    printf("\t\t%s > %02d [0x%02X]\n", __FUNCTION__, Value, Value);
 #ifdef RPI
 #ifdef USE_BCM2835_LIB
 	bcm2835_spi_transfer(Value);
