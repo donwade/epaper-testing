@@ -47,9 +47,12 @@ int EPD_PWR_PIN;
 /**
  * GPIO read and write
 **/
-void DEV_Digital_Write(UWORD Pin, UBYTE Value)
+
+void xDEV_Digital_Write(char *x, UWORD Pin, UBYTE Value)
 {
 #ifdef RPI
+    printf("%s : %s (%02d)=%d\n", __FUNCTION__, x, Pin, Value);
+    if (Pin == 8 && Value == 1) printf("\n");   //transaction done
 #ifdef USE_BCM2835_LIB
 	bcm2835_gpio_write(Pin, Value);
 #elif USE_WIRINGPI_LIB
@@ -69,6 +72,9 @@ void DEV_Digital_Write(UWORD Pin, UBYTE Value)
 #endif
 #endif
 }
+
+static int8_t hist_value[256] = {-1};
+static uint32_t hist_cnt[256] = {0};
 
 UBYTE DEV_Digital_Read(UWORD Pin)
 {
@@ -92,14 +98,25 @@ UBYTE DEV_Digital_Read(UWORD Pin)
 	Debug("not support");
 #endif
 #endif
+    if ( hist_value[Pin] != Read_value)
+    {
+        printf("\t%s :[%d] was=%02d cnt=%d now=%2d\n", __FUNCTION__,  Pin, hist_value[Pin], hist_cnt[Pin], Read_value );
+        hist_value[Pin] = Read_value;
+        hist_cnt[Pin] = 0;
+    }
+    else
+        hist_cnt[Pin]++;
+
 	return Read_value;
 }
 
 /**
  * SPI
 **/
+
 void DEV_SPI_WriteByte(uint8_t Value)
 {
+    printf("%s > %02d [0x%02X]\n", __FUNCTION__, Value, Value);
 #ifdef RPI
 #ifdef USE_BCM2835_LIB
 	bcm2835_spi_transfer(Value);
@@ -123,6 +140,10 @@ void DEV_SPI_WriteByte(uint8_t Value)
 
 void DEV_SPI_Write_nByte(uint8_t *pData, uint32_t Len)
 {
+    printf("%s >> ", __FUNCTION__);
+    for(int i = 0; i < Len; i++) printf("0x%02X", pData[i]);
+    printf("\n");
+
 #ifdef RPI
 #ifdef USE_BCM2835_LIB
 	char rData[Len];
@@ -152,7 +173,8 @@ void DEV_SPI_Write_nByte(uint8_t *pData, uint32_t Len)
 /**
  * GPIO Mode
 **/
-void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
+
+void xDEV_GPIO_Mode(char *x, UWORD Pin, UWORD Mode)
 {
 #ifdef RPI
 #ifdef USE_BCM2835_LIB
@@ -196,6 +218,7 @@ void DEV_GPIO_Mode(UWORD Pin, UWORD Mode)
 	Debug("not support");
 #endif
 #endif
+    printf("%s: %s pin %d, mode %d\n", __FUNCTION__, x, Pin, Mode);
 }
 
 /**

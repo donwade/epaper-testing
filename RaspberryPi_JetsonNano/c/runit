@@ -1,4 +1,5 @@
 #!/bin/bash
+reset
 
 if [ "$PISSWORD" == "" ]; then
     PISSWORD="$1"

@@ -9,9 +9,10 @@ rm -f *.i *.s epd
 make clean
 make -j4 EPD=epd7in5bV2
 if [ $? != 0 ]; then
-    echo "make failed"
+    echo "make failed... fix it"
+    exit
 fi
-set -x
+
 if [ "$UNAME" != "whitebox" ]; then
 
     echo
