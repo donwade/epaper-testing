@@ -8,7 +8,7 @@ DIR_BIN		 = ./bin
 DIR_INC_WX = ./include.wx
 DIR_SRC_WX = ./src.wx
 DIR_LIB_WX = ./lib.wx
-
+ARDUINO_INSTALL = /home/dwade/Arduino/libraries/*
 
 EPD = NULL
 ifeq ($(EPD), epd7in5)
@@ -37,8 +37,28 @@ else
     OBJ_C_Examples = NULL
 endif
 
+# locate all arduino header files.
+ARDUINO_H_LIST = $(wildcard ${ARDUINO_INSTALL}/*.h )
+#$(info $$ARDUINO_H_LIST = $(ARDUINO_H_LIST))
+#echo
+
+# strip out file names. Just the dirs please
+# find all h files with full paths then sort and 'uniq' them.
+H_PATHS := $(sort $(patsubst %/,%,$(dir $(ARDUINO_H_LIST))))
+
+# add -I to dir names and surround with bunny ears
+A_PATHS=$(shell  echo ${H_PATHS} | sed 's=/home=-I\"/home=g' | sed 's= -I=\" -I=g' )
+
+# need one crummy closing quote to above, the bunny ear is not a mistake.
+# arduino uses <> paths poorly requiring the add on path.
+# not sure picking up arduino.h
+ARDUINO_H_PATHS=${A_PATHS}" -I"/home/dwade/Arduino/libraries/ArduinoJson-7.x/src/" -I"/home/dwade/.arduino15/packages/esp32/hardware/esp32/2.0.14/cores/esp32" -I"/home/dwade/.arduino15/packages/esp32/hardware/esp32/2.0.14/tools/sdk/esp32c3/include/freertos/include/"
+
+$(info $$ARDUINO_H_PATHS = $(ARDUINO_H_PATHS))
+
+
 C_SRC_OLD = $(wildcard ${OBJ_C_EPD} ${DIR_GUI}/*.c ${OBJ_C_Examples} ${DIR_Examples}/main.c ${DIR_Examples}/ImageData2.c ${DIR_Examples}/ImageData.c ${DIR_FONTS}/*.c )
-$(info $$C_SCR_OLD = $(C_SRC_OLD))
+$(info $$C_SRC_OLD = $(C_SRC_OLD))
 
 CPP_SRC_NEW = $(wildcard ${DIR_SRC_WX}/*.cpp )
 $(info $$CPP_SRC_NEW = $(CPP_SRC_NEW))
@@ -117,7 +137,7 @@ ${DIR_BIN}/%.o:$(DIR_GUI)/%.c
 	@echo "***** rule $(@) done -------------------" 
 
 ${DIR_BIN}/%.o:$(DIR_SRC_WX)/%.cpp
-	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) $(DEBUG)
+	$(CC) $(CFLAGS) -c	$< -o $@ ${ARDUINO_H_PATHS} -I./include.wx -I $(DIR_Config) $(DEBUG)
 	@echo "***** rule $(@) done -------------------" 
 
 RPI_HW:
