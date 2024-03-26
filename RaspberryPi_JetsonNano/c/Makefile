@@ -96,40 +96,41 @@ CXXFLAGS += ${CFLAGS}
 RPI_epd:${FULL_OBJECT_LIST}
 	echo $(@)
 	$(CC) $(CFLAGS) -D RPI $(FULL_OBJECT_LIST) $(RPI_HW_OBJ) -o $(TARGET) $(LIB_RPI) $(DEBUG)
-	echo 
+	@echo "***** rule $(@) done -------------------" 
 
 $(shell mkdir -p $(DIR_BIN))
 
 ${DIR_BIN}/%.o:$(DIR_Examples)/%.c
 	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) -I $(DIR_GUI) -I $(DIR_EPD) $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
 	
 ${DIR_BIN}/%.o:$(DIR_EPD)/%.c
 	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
 
 ${DIR_BIN}/%.o:$(DIR_FONTS)/%.c 
 	$(CC) $(CFLAGS) -c	$< -o $@ $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
 
 ${DIR_BIN}/%.o:$(DIR_GUI)/%.c
 	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
 
 ${DIR_BIN}/%.o:$(DIR_SRC_WX)/%.cpp
 	$(CC) $(CFLAGS) -c	$< -o $@ -I $(DIR_Config) $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
 
 RPI_HW:
 	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/dev_hardware_SPI.c -o $(DIR_BIN)/dev_hardware_SPI.o $(LIB_RPI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/RPI_gpiod.c -o $(DIR_BIN)/RPI_gpiod.o $(LIB_RPI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_RPI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_RPI) $(DEBUG)
-	echo "***** rule $(@) done -------------------" 
+	@echo "***** rule $(@) done -------------------" 
  	
 JETSON_DEV:
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/sysfs_software_spi.c -o $(DIR_BIN)/sysfs_software_spi.o $(LIB_JETSONI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/sysfs_gpio.c -o $(DIR_BIN)/sysfs_gpio.o $(LIB_JETSONI) $(DEBUG)
 	$(CC) $(CFLAGS) $(DEBUG_JETSONI) -c	 $(DIR_Config)/DEV_Config.c -o $(DIR_BIN)/DEV_Config.o $(LIB_JETSONI)  $(DEBUG)
+	@echo "***** rule $(@) done -------------------" 
 
 clean :
 	rm $(DIR_BIN)/*.* 
