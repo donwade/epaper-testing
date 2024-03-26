@@ -7,10 +7,14 @@ sleep 3
 rm -f *.i *.s epd
 
 make clean
-make -j4 EPD=epd7in5bV2
+#make SHELL='/bin/bash -x' -dn  -j1 V=1 EPD=epd7in5bV2 | egrep -v "Trying|Avoiding|Looking"
+make SHELL='/bin/bash -x' -j1 V=1 EPD=epd7in5bV2 | egrep -v "Trying|Avoiding|Looking"
 if [ $? != 0 ]; then
     echo "make failed"
 fi
+
+exit
+
 set -x
 if [ "$UNAME" != "whitebox" ]; then
 
