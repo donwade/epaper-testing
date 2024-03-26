@@ -5,6 +5,11 @@ DIR_GUI		 = ./lib/GUI
 DIR_Examples = ./examples
 DIR_BIN		 = ./bin
 
+DIR_INC_WX = ./include.wx
+DIR_SRC_WX = ./src.wx
+DIR_LIB_WX = ./lib.wx
+
+
 EPD = NULL
 ifeq ($(EPD), epd1in64g)
 	OBJ_C_EPD = ${DIR_EPD}/EPD_1in64g.c
@@ -194,7 +199,7 @@ else
     OBJ_C_Examples = NULL
 endif
 
-OBJ_C = $(wildcard ${OBJ_C_EPD} ${DIR_GUI}/*.c ${OBJ_C_Examples} ${DIR_Examples}/main.c ${DIR_Examples}/ImageData2.c ${DIR_Examples}/ImageData.c ${DIR_FONTS}/*.c )
+OBJ_C = $(wildcard ${OBJ_C_EPD} ${DIR_LIB_WX}/*.cpp ${DIR_GUI}/*.c ${OBJ_C_Examples} ${DIR_Examples}/main.c ${DIR_Examples}/ImageData2.c ${DIR_Examples}/ImageData.c ${DIR_FONTS}/*.c )
 OBJ_O = $(patsubst %.c,${DIR_BIN}/%.o,$(notdir ${OBJ_C}))
 RPI_DEV_C = $(wildcard $(DIR_BIN)/dev_hardware_SPI.o $(DIR_BIN)/RPI_gpiod.o $(DIR_BIN)/DEV_Config.o )
 JETSON_DEV_C = $(wildcard $(DIR_BIN)/sysfs_software_spi.o $(DIR_BIN)/sysfs_gpio.o $(DIR_BIN)/DEV_Config.o )
