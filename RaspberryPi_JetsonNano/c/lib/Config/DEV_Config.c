@@ -51,13 +51,14 @@ int EPD_PWR_PIN;
 void xDEV_Digital_Write(char *x, UWORD Pin, UBYTE Value)
 {
 #ifdef RPI
+/*
     if (Pin == 25)
-        printf("%s : %s (%02d)=%2d \t%s\n", __FUNCTION__, x, Pin, Value, Value == 0 ? "COMMAND" :
-        "DATA");
+        /////printf("%s : %s (%02d)=%2d \t%s\n", __FUNCTION__, x, Pin, Value, Value == 0 ? "COMMAND" : "DATA");
     else
-        printf("%s : %s (%02d)=%2d\n", __FUNCTION__, x, Pin, Value);
+        /////printf("%s : %s (%02d)=%2d\n", __FUNCTION__, x, Pin, Value);
 
-    if (Pin == 8 && Value == 1) printf("\n");   //transaction done
+    ////if (Pin == 8 && Value == 1) printf("\n");   //transaction done
+*/
 #ifdef USE_BCM2835_LIB
 	bcm2835_gpio_write(Pin, Value);
 #elif USE_WIRINGPI_LIB
@@ -105,7 +106,7 @@ UBYTE DEV_Digital_Read(UWORD Pin)
 #endif
     if ( hist_value[Pin] != Read_value)
     {
-        printf("\t%s :[%d] was=%02d cnt=%d now=%2d\n", __FUNCTION__,  Pin, hist_value[Pin], hist_cnt[Pin], Read_value );
+        ////printf("\t%s :[%d] was=%02d cnt=%d now=%2d\n", __FUNCTION__,  Pin, hist_value[Pin], hist_cnt[Pin], Read_value );
         hist_value[Pin] = Read_value;
         hist_cnt[Pin] = 0;
     }
